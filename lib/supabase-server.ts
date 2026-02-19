@@ -1,9 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 
 export const createSupabaseAdminClient = () => {
-  const supabaseUrl =
-    process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+  const normalizeEnv = (value?: string) => {
+    if (!value) return "";
+    return value.replace(/^\uFEFF/, "").trim();
+  };
+
+  const supabaseUrl = normalizeEnv(
+    process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL
+  );
+  const supabaseServiceKey = normalizeEnv(
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
   if (!supabaseUrl || !supabaseServiceKey) {
     return null;

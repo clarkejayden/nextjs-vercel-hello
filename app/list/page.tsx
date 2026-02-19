@@ -1,6 +1,10 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
+import { getAuthState } from "@/lib/auth";
+import { AuthHeader } from "@/app/components/AuthHeader";
+import { LogoutButton } from "@/app/components/LogoutButton";
 
 type UserRow = Record<string, unknown>;
 
@@ -149,6 +153,46 @@ export default async function ListPage({
 }) {
   const pageParam = Number(searchParams?.page);
   const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+  const { user, profile, isAuthorized } = await getAuthState();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  if (!isAuthorized) {
+    return (
+      <main className="relative min-h-screen overflow-hidden bg-[var(--paper)] px-6 py-16">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 right-[-10%] h-64 w-64 rounded-full bg-[var(--accent)]/20 blur-3xl" />
+          <div className="absolute bottom-0 left-[-12%] h-80 w-80 rounded-full bg-[var(--accent-2)]/20 blur-3xl" />
+        </div>
+        <div className="relative mx-auto w-full max-w-3xl space-y-8">
+          <div className="rounded-3xl border border-black/5 bg-white/90 p-8 shadow-[var(--shadow)] backdrop-blur">
+            <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted)]">
+              Access denied
+            </p>
+            <h1 className="mt-3 font-display text-4xl tracking-tight sm:text-5xl">
+              Your account is not authorized
+            </h1>
+            <p className="mt-3 text-base text-[var(--muted)] sm:text-lg">
+              Signed in as {user.email ?? "your account"}, but the profile does
+              not have access flags enabled. Contact an administrator to grant
+              access.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <LogoutButton className="rounded-full border border-black/20 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow" />
+              <Link
+                href="/login"
+                className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
+              >
+                Return to sign in
+              </Link>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[var(--paper)] px-6 py-16">
@@ -157,6 +201,7 @@ export default async function ListPage({
         <div className="absolute bottom-0 left-[-12%] h-80 w-80 rounded-full bg-[var(--accent-2)]/20 blur-3xl" />
       </div>
       <div className="relative mx-auto w-full max-w-5xl space-y-10">
+        <AuthHeader user={user} profile={profile} />
         <header className="space-y-3">
           <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted)]">
             Directory
