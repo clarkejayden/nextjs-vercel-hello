@@ -18,7 +18,18 @@ export const getAuthState = async () => {
     error: userError,
   } = await supabase.auth.getUser();
 
-  if (userError || !user) {
+  if (userError) {
+    if (userError.code === "refresh_token_not_found") {
+      await supabase.auth.signOut();
+    }
+    return {
+      user: null,
+      profile: null as Profile | null,
+      isAuthorized: false,
+    };
+  }
+
+  if (!user) {
     return {
       user: null,
       profile: null as Profile | null,
