@@ -19,7 +19,7 @@
 }
 
 body {
-  background: var(--paper);
+  background: radial-gradient(circle at top, #fff6e9 0%, #ffe9cc 45%, #f8dfc2 100%);
   color: var(--ink);
   font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
 }
@@ -45,6 +45,28 @@ body {
   }
 }
 
+@keyframes caption-swipe-right {
+  from {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+  to {
+    opacity: 0.2;
+    transform: translateX(80px) rotate(6deg);
+  }
+}
+
+@keyframes caption-swipe-left {
+  from {
+    opacity: 1;
+    transform: translateX(0) rotate(0deg);
+  }
+  to {
+    opacity: 0.2;
+    transform: translateX(-80px) rotate(-6deg);
+  }
+}
+
 @layer utilities {
   .font-display {
     font-family: var(--font-fraunces), "Fraunces", serif;
@@ -57,4 +79,12 @@ body {
   .animate-drift {
     animation: drift 6s ease-in-out infinite;
   }
+}
+
+.caption-swipe-right {
+  animation: caption-swipe-right 420ms ease-in forwards;
+}
+
+.caption-swipe-left {
+  animation: caption-swipe-left 420ms ease-in forwards;
 }
