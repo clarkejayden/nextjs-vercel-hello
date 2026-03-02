@@ -56,6 +56,14 @@ export default async function LoginPage() {
           </p>
         </div>
         <OAuthButtons />
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/"
+            className="rounded-full border border-black/20 bg-white px-5 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
+          >
+            Continue as guest
+          </Link>
+        </div>
         <p className="text-xs text-[var(--muted)]">
           By continuing you will be redirected through OAuth and returned to
           <span className="font-semibold text-[var(--ink)]"> /auth/callback</span>.

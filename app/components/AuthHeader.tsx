@@ -39,6 +39,12 @@ export const AuthHeader = ({
         >
           Captions
         </Link>
+        <Link
+          href="/upload"
+          className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
+        >
+          Upload
+        </Link>
         <LogoutButton className="rounded-full border border-black/20 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow" />
       </div>
     </header>
