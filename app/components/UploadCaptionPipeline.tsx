@@ -325,7 +325,10 @@ export const UploadCaptionPipeline = () => {
     }
   };
 
-  const ensureImageRow = async (supabase: ReturnType<typeof createSupabaseBrowserClient>) => {
+  const ensureImageRow = async (
+    supabase: ReturnType<typeof createSupabaseBrowserClient>,
+    userId: string
+  ) => {
     if (savedImageId) return savedImageId;
     if (!uploadedImageUrl) {
       throw new Error("Missing image URL for saving.");
@@ -336,6 +339,8 @@ export const UploadCaptionPipeline = () => {
       .insert({
         url: uploadedImageUrl,
         is_public: false,
+        created_by_user_id: userId,
+        modified_by_user_id: userId,
       })
       .select("id")
       .single();
@@ -378,12 +383,14 @@ export const UploadCaptionPipeline = () => {
         throw new Error("You must be signed in to save captions.");
       }
 
-      const imageId = await ensureImageRow(supabase);
+      const imageId = await ensureImageRow(supabase, sessionData.session.user.id);
 
       const { error: insertError } = await supabase.from("captions").insert({
         content: item.text,
         is_public: false,
         image_id: imageId,
+        created_by_user_id: sessionData.session.user.id,
+        modified_by_user_id: sessionData.session.user.id,
       });
 
       if (insertError) {
