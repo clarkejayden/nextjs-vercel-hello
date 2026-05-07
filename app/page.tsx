@@ -34,8 +34,7 @@ const fetchPopularCaptions = async () => {
       data: [] as CaptionRow[],
       votes: [] as VoteRow[],
       images: [] as ImageRow[],
-      error:
-        "Missing Supabase server credentials. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
+      error: "Missing Supabase server credentials. Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.",
     };
   }
 
@@ -48,49 +47,28 @@ const fetchPopularCaptions = async () => {
     .order("created_datetime_utc", { ascending: false })
     .limit(48);
 
-  if (captionError) {
-    return { data: [], votes: [], images: [], error: captionError.message };
-  }
+  if (captionError) return { data: [], votes: [], images: [], error: captionError.message };
 
-  const captionIds = (captions ?? []).map((caption) => caption.id);
-  const imageIds = Array.from(
-    new Set(
-      (captions ?? [])
-        .map((caption) => caption.image_id)
-        .filter((id): id is string => Boolean(id))
-    )
-  );
+  const captionIds = (captions ?? []).map((c) => c.id);
+  const imageIds = Array.from(new Set((captions ?? []).map((c) => c.image_id).filter((id): id is string => Boolean(id))));
 
-  const { data: votes } =
-    captionIds.length > 0
-      ? await supabaseAdmin
-          .from("caption_votes")
-          .select("caption_id,profile_id,vote_value")
-          .in("caption_id", captionIds)
-      : { data: [] as VoteRow[] };
+  const { data: votes } = captionIds.length > 0
+    ? await supabaseAdmin.from("caption_votes").select("caption_id,profile_id,vote_value").in("caption_id", captionIds)
+    : { data: [] as VoteRow[] };
 
-  const { data: images } =
-    imageIds.length > 0
-      ? await supabaseAdmin.from("images").select("id,url").in("id", imageIds)
-      : { data: [] as ImageRow[] };
+  const { data: images } = imageIds.length > 0
+    ? await supabaseAdmin.from("images").select("id,url").in("id", imageIds)
+    : { data: [] as ImageRow[] };
 
-  return {
-    data: captions ?? [],
-    votes: votes ?? [],
-    images: images ?? [],
-    error: null,
-  };
+  return { data: captions ?? [], votes: votes ?? [], images: images ?? [], error: null };
 };
 
 export default async function DashboardPage() {
   const { user, profile } = await getAuthState();
-
   const { data, votes, images, error } = await fetchPopularCaptions();
 
   const voteTotals = new Map<string, { up: number; down: number }>();
-  (data ?? []).forEach((caption) =>
-    voteTotals.set(caption.id, { up: 0, down: 0 })
-  );
+  (data ?? []).forEach((caption) => voteTotals.set(caption.id, { up: 0, down: 0 }));
   (votes ?? []).forEach((vote) => {
     const entry = voteTotals.get(vote.caption_id);
     if (!entry) return;
@@ -101,12 +79,7 @@ export default async function DashboardPage() {
   const currentUserVotes = new Map<string, 1 | -1 | 0>();
   if (user) {
     (votes ?? []).forEach((vote) => {
-      if (vote.profile_id === user.id) {
-        currentUserVotes.set(
-          vote.caption_id,
-          vote.vote_value === 1 ? 1 : -1
-        );
-      }
+      if (vote.profile_id === user.id) currentUserVotes.set(vote.caption_id, vote.vote_value === 1 ? 1 : -1);
     });
   }
 
@@ -124,61 +97,46 @@ export default async function DashboardPage() {
     .sort((a, b) => b.upvotes - a.upvotes);
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[var(--paper)] px-6 py-16">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 right-[-10%] h-64 w-64 rounded-full bg-[var(--accent)]/20 blur-3xl" />
-        <div className="absolute bottom-0 left-[-12%] h-80 w-80 rounded-full bg-[var(--accent-2)]/20 blur-3xl" />
-      </div>
+    <main className="relative min-h-screen overflow-hidden px-6 py-12" style={{ background: "var(--paper)" }}>
       <div className="relative mx-auto w-full max-w-6xl space-y-10">
         {user ? (
           <AuthHeader user={user} profile={profile} />
         ) : (
-          <header className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-black/5 bg-white/80 px-6 py-4 shadow-[var(--shadow)] backdrop-blur">
-            <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
-                Welcome
-              </p>
-              <div className="text-lg font-semibold text-[var(--ink)]">
-                Caption dashboard
-              </div>
-              <div className="text-xs text-[var(--muted)]">
-                Sign in to vote and upload.
-              </div>
+          <header className="glass-card flex flex-wrap items-center justify-between gap-4 rounded-2xl px-6 py-4">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>Welcome</p>
+              <div className="text-sm font-semibold" style={{ color: "var(--ink)" }}>Caption dashboard</div>
+              <div className="text-xs" style={{ color: "var(--muted)" }}>Sign in to vote and upload.</div>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/login"
-                className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
-              >
+            <div className="flex flex-wrap items-center gap-2">
+              <Link href="/login" className="btn-ghost rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wider">
                 Log in
               </Link>
-              <Link
-                href="/upload"
-                className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
-              >
+              <Link href="/upload" className="btn-ghost rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wider">
                 Upload
               </Link>
             </div>
           </header>
         )}
-        <header className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.4em] text-[var(--muted)]">
+
+        <header className="space-y-2">
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--accent-bright)" }}>
             Dashboard
           </p>
-          <h1 className="font-display text-4xl tracking-tight sm:text-5xl">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl" style={{ color: "var(--ink)" }}>
             Most Popular Captions
           </h1>
-          <p className="max-w-2xl text-base text-[var(--muted)] sm:text-lg">
+          <p className="max-w-2xl text-base sm:text-lg" style={{ color: "var(--muted)" }}>
             Caption-image pairs ranked by up-votes in descending order.
           </p>
         </header>
 
         {error ? (
-          <p role="alert">Error loading captions: {error}</p>
+          <p role="alert" className="text-sm" style={{ color: "#f87171" }}>Error loading captions: {error}</p>
         ) : items.length === 0 ? (
-          <p>No caption pairs available.</p>
+          <p style={{ color: "var(--muted)" }}>No caption pairs available.</p>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
             {items.map((item) => (
               <DashboardCaptionCard
                 key={item.id}

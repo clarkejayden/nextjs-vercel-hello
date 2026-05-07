@@ -1,77 +1,95 @@
 @import "tailwindcss";
 
 :root {
-  --paper: #fff5e6;
-  --ink: #1f1b16;
-  --muted: #5d564f;
-  --card: #ffffff;
-  --accent: #ff6b35;
-  --accent-2: #197278;
-  --ring: rgba(31, 27, 22, 0.14);
-  --shadow: 0 24px 60px rgba(31, 27, 22, 0.15);
+  --paper: #030d1a;
+  --ink: #e2eaf4;
+  --muted: #64849e;
+  --card: #061428;
+  --card-elevated: #0a1f38;
+  --accent: #2563eb;
+  --accent-bright: #60a5fa;
+  --accent-2: #06b6d4;
+  --border: rgba(26, 58, 92, 0.7);
+  --ring: rgba(37, 99, 235, 0.35);
+  --shadow: 0 4px 32px -8px rgba(3, 13, 26, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-glow: 0 0 24px rgba(59, 130, 246, 0.3);
+  --shadow-glow-lg: 0 0 48px rgba(59, 130, 246, 0.4);
 }
 
 @theme inline {
   --color-background: var(--paper);
   --color-foreground: var(--ink);
   --font-sans: var(--font-space-grotesk);
-  --font-display: var(--font-fraunces);
 }
 
 body {
-  background: radial-gradient(circle at top, #fff6e9 0%, #ffe9cc 45%, #f8dfc2 100%);
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(37, 99, 235, 0.2) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+    linear-gradient(rgba(37, 99, 235, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 99, 235, 0.05) 1px, transparent 1px);
+  background-size: auto, auto, 40px 40px, 40px 40px;
   color: var(--ink);
   font-family: var(--font-space-grotesk), "Space Grotesk", sans-serif;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(26, 58, 92, 0.8) var(--paper);
+}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: var(--paper); }
+*::-webkit-scrollbar-thumb { background: rgba(26, 58, 92, 0.8); border-radius: 3px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+::selection {
+  background: rgba(37, 99, 235, 0.3);
+  color: var(--ink);
+}
+
 @keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes drift {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
 }
 
 @keyframes caption-swipe-right {
-  from {
-    opacity: 1;
-    transform: translateX(0) rotate(0deg);
-  }
-  to {
-    opacity: 0.2;
-    transform: translateX(80px) rotate(6deg);
-  }
+  0%   { opacity: 1;   transform: translate3d(0, 0, 0) rotate(0deg);    }
+  100% { opacity: 0;   transform: translate3d(140px, -20px, 0) rotate(8deg); }
 }
 
 @keyframes caption-swipe-left {
-  from {
-    opacity: 1;
-    transform: translateX(0) rotate(0deg);
-  }
-  to {
-    opacity: 0.2;
-    transform: translateX(-80px) rotate(-6deg);
-  }
+  0%   { opacity: 1;   transform: translate3d(0, 0, 0) rotate(0deg);     }
+  100% { opacity: 0;   transform: translate3d(-140px, -20px, 0) rotate(-8deg); }
+}
+
+@keyframes glow-pulse {
+  0%   { box-shadow: 0 0 8px rgba(59, 130, 246, 0.2); }
+  100% { box-shadow: 0 0 28px rgba(59, 130, 246, 0.5); }
+}
+
+@keyframes particle-fly {
+  0%   { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+  60%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translate(var(--tx, 0px), var(--ty, -40px)) scale(0.1) rotate(var(--tr, 180deg)); }
+}
+
+@keyframes particle-spark {
+  0%   { opacity: 1; transform: translate(0, 0) scaleX(1) scaleY(1) rotate(var(--tr, 0deg)); }
+  100% { opacity: 0; transform: translate(var(--tx, 0px), var(--ty, -40px)) scaleX(0.2) scaleY(3) rotate(var(--tr, 0deg)); }
+}
+
+@keyframes particle-ring-expand {
+  0%   { opacity: 0.7; transform: translate(-50%, -50%) scale(0); }
+  100% { opacity: 0;   transform: translate(-50%, -50%) scale(1); }
 }
 
 @layer utilities {
-  .font-display {
-    font-family: var(--font-fraunces), "Fraunces", serif;
-  }
-
   .animate-fade-up {
     animation: fade-up 600ms ease-out both;
   }
@@ -79,12 +97,80 @@ body {
   .animate-drift {
     animation: drift 6s ease-in-out infinite;
   }
+
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite alternate;
+  }
+
+  .glass {
+    background: rgba(6, 20, 40, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+  }
+
+  .glass-card {
+    background: rgba(6, 20, 40, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .glow-border {
+    position: relative;
+  }
+  .glow-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.5), rgba(6, 182, 212, 0.25), rgba(37, 99, 235, 0.1));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--accent-bright), var(--accent-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: #fff;
+    box-shadow: 0 0 16px rgba(37, 99, 235, 0.35);
+    transition: all 0.2s;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    box-shadow: 0 0 28px rgba(37, 99, 235, 0.5);
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover {
+    border-color: rgba(37, 99, 235, 0.5);
+    color: var(--accent-bright);
+    background: rgba(37, 99, 235, 0.08);
+  }
 }
 
 .caption-swipe-right {
-  animation: caption-swipe-right 420ms ease-in forwards;
+  animation: caption-swipe-right 480ms cubic-bezier(0.4, 0, 0.8, 0.6) forwards;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .caption-swipe-left {
-  animation: caption-swipe-left 420ms ease-in forwards;
+  animation: caption-swipe-left 480ms cubic-bezier(0.4, 0, 0.8, 0.6) forwards;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }

@@ -15,38 +15,43 @@ export const AuthHeader = ({
       ? `${profile?.first_name ?? ""} ${profile?.last_name ?? ""}`.trim()
       : user.email ?? "Signed-in user";
 
+  const initials = (displayName ?? "?").slice(0, 2).toUpperCase();
+
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-black/5 bg-white/80 px-6 py-4 shadow-[var(--shadow)] backdrop-blur">
-      <div className="space-y-1">
-        <p className="text-xs uppercase tracking-[0.3em] text-[var(--muted)]">
-          Signed in
-        </p>
-        <div className="text-lg font-semibold text-[var(--ink)]">
-          {displayName}
+    <header className="glass-card flex flex-wrap items-center justify-between gap-4 rounded-2xl px-6 py-4">
+      <div className="flex items-center gap-3">
+        <div
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold text-white"
+          style={{ background: "linear-gradient(135deg, #1d4ed8, #06b6d4)", boxShadow: "0 0 12px rgba(37,99,235,0.4)" }}
+        >
+          {initials}
         </div>
-        <div className="text-xs text-[var(--muted)]">{user.email}</div>
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+            Signed in
+          </p>
+          <div className="text-sm font-semibold" style={{ color: "var(--ink)" }}>
+            {displayName}
+          </div>
+          <div className="text-xs" style={{ color: "var(--muted)" }}>{user.email}</div>
+        </div>
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <Link
-          href="/"
-          className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
-        >
-          Dashboard
-        </Link>
-        <Link
-          href="/captions"
-          className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
-        >
-          Captions
-        </Link>
-        <Link
-          href="/upload"
-          className="rounded-full border border-black/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow"
-        >
-          Upload
-        </Link>
-        <LogoutButton className="rounded-full border border-black/20 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--ink)] transition hover:-translate-y-0.5 hover:shadow" />
-      </div>
+      <nav className="flex flex-wrap items-center gap-2">
+        {[
+          { href: "/", label: "Dashboard" },
+          { href: "/captions", label: "Captions" },
+          { href: "/upload", label: "Upload" },
+        ].map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="btn-ghost rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wider"
+          >
+            {item.label}
+          </Link>
+        ))}
+        <LogoutButton className="btn-ghost rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wider" />
+      </nav>
     </header>
   );
 };
