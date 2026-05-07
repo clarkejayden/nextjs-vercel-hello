@@ -76,7 +76,7 @@ export default async function CaptionsPage() {
         </header>
 
         {error ? (
-          <p role="alert" className="text-sm" style={{ color: "#f87171" }}>Error loading captions: {error}</p>
+          <p role="alert" className="text-sm" style={{ color: "#f87171" }}>Error loading captions: {error.message}</p>
         ) : filtered.length === 0 ? (
           <p style={{ color: "var(--muted)" }}>No public captions found.</p>
         ) : (

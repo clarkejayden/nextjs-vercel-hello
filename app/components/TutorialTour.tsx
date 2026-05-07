@@ -109,13 +109,16 @@ export const TutorialTour = () => {
   const step = steps[index];
 
   // Tooltip placement — fixed coords, no scrollY needed
+  // All window accesses are guarded behind `rect` so they never run during SSR
   const TOOLTIP_H = 220;
   const MARGIN = 12;
   const belowTop  = rect ? rect.top + rect.height + PAD + 14 : 0;
   const aboveTop  = rect ? rect.top - PAD - 14 - TOOLTIP_H  : 0;
   const tooLow    = rect ? belowTop + TOOLTIP_H > window.innerHeight - MARGIN : false;
   const rawTop    = tooLow ? aboveTop : belowTop;
-  const tooltipTopAdjusted = Math.min(Math.max(rawTop, MARGIN), window.innerHeight - TOOLTIP_H - MARGIN);
+  const tooltipTopAdjusted = rect
+    ? Math.min(Math.max(rawTop, MARGIN), window.innerHeight - TOOLTIP_H - MARGIN)
+    : 0;
   const tooltipLeft = rect
     ? Math.min(Math.max(rect.left, MARGIN), window.innerWidth - TOOLTIP_W - MARGIN)
     : 0;
