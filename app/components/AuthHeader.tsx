@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogoutButton } from "@/app/components/LogoutButton";
+import { TutorialTour } from "@/app/components/TutorialTour";
 import type { Profile } from "@/lib/auth";
 import type { User } from "@supabase/supabase-js";
 
@@ -38,18 +39,20 @@ export const AuthHeader = ({
       </div>
       <nav className="flex flex-wrap items-center gap-2">
         {[
-          { href: "/", label: "Dashboard" },
-          { href: "/captions", label: "Captions" },
-          { href: "/upload", label: "Upload" },
+          { href: "/", label: "Dashboard", tour: "nav-dashboard" },
+          { href: "/captions", label: "Captions", tour: "nav-captions" },
+          { href: "/upload", label: "Upload", tour: "nav-upload" },
         ].map((item) => (
           <Link
             key={item.href}
             href={item.href}
+            data-tour={item.tour}
             className="btn-ghost rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wider"
           >
             {item.label}
           </Link>
         ))}
+        <TutorialTour />
         <LogoutButton className="btn-ghost rounded-xl px-4 py-2 text-xs font-semibold uppercase tracking-wider" />
       </nav>
     </header>

@@ -451,6 +451,7 @@ export const CaptionVoteCarousel = ({
 
           {/* Draggable card */}
           <div
+            data-tour="carousel-image"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -528,7 +529,7 @@ export const CaptionVoteCarousel = ({
           </span>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <div data-tour="carousel-vote-buttons" className="mt-6 flex flex-wrap items-center justify-center gap-3">
           {[1, -1].map((value) => {
             const voteValue = value as VoteValue;
             const isSelected = selectedVote === voteValue;
@@ -552,6 +553,7 @@ export const CaptionVoteCarousel = ({
             );
           })}
           <button
+            data-tour="carousel-skip"
             type="button"
             onClick={() => { if (status !== "saving") void refreshCaption(); }}
             className="flex h-12 w-12 items-center justify-center rounded-xl text-lg transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
